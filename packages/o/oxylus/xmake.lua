@@ -9,7 +9,7 @@ package("oxylus")
 
     set_policy("package.strict_compatibility", true)
 
-    add_configs("lua_bindings", {description = "Enable lua bindings", default = false, type = "boolean"})
+    add_configs("lua_bindings", {description = "Enable lua bindings", default = true, type = "boolean"})
     add_configs("profile", {description = "Enable tracy profiling", default = false, type = "boolean"})
 
     on_install(function (package)
