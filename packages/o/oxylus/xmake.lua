@@ -5,7 +5,7 @@ package("oxylus")
 
     add_urls("https://github.com/oxylusengine/Oxylus.git")
 
-    add_versions("v1.0.0", "6e602ab13afb8028bb6c58a2cfb6414687b90a2a")
+    add_versions("v1.0.0", "1d460f68950df56ee81fb52e6c0bee8861f26d4f")
 
     set_policy("package.strict_compatibility", true)
 
