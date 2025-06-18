@@ -12,6 +12,8 @@ package("oxylus")
     add_configs("lua_bindings", {description = "Enable lua bindings", default = true, type = "boolean"})
     add_configs("profile", {description = "Enable tracy profiling", default = false, type = "boolean"})
 
+    add_deps("vuk")
+
     on_install(function (package)
         local configs = {}
         configs.lua_bindings = package:config("lua_bindings")
