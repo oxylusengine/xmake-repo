@@ -5,7 +5,7 @@ package("oxylus")
 
     add_urls("https://github.com/oxylusengine/Oxylus.git")
 
-    add_versions("v1.0.0", "1d460f68950df56ee81fb52e6c0bee8861f26d4f")
+    add_versions("v1.0.0", "aaf9d0b7fb1226e28875d89defa640823f87eb1c")
 
     set_policy("package.strict_compatibility", true)
 
@@ -17,5 +17,5 @@ package("oxylus")
         configs.lua_bindings = package:config("lua_bindings")
         configs.profile = package:config("profile")
         import("package.tools.xmake").install(package, configs)
-        os.cp("Oxylus/include/", package:installdir("include"))
+        os.cp("Oxylus/include", package:installdir())
     end)
