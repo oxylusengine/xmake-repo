@@ -1,10 +1,10 @@
 package("imguizmo-lr")
-    set_homepage("https://github.com/CedricGuillemet/ImGuizmo")
+    set_homepage("https://github.com/Hatrickek/ImGuizmo")
     set_description("Immediate mode 3D gizmo for scene editing and other controls based on Dear Imgui")
 
-    add_urls("https://github.com/CedricGuillemet/ImGuizmo.git")
+    add_urls("https://github.com/Hatrickek/ImGuizmo.git")
 
-    add_versions("v1.91.8-docking", "2310acda820d7383d4c4884b7945ada92cd16a47")
+    add_versions("v1.91.8-docking", "1a15fc572cd982bb22b6b3680810a12703af2577")
 
     on_load(function (package)
         local v = package:version()
