@@ -4,7 +4,7 @@ package("imguizmo-lr")
 
     add_urls("https://github.com/Hatrickek/ImGuizmo.git")
 
-    add_versions("v1.91.8-docking", "1a15fc572cd982bb22b6b3680810a12703af2577")
+    add_versions("v1.91.8-docking", "a0bf889bcaebee8f110f2ebcf851a2d273d4bf89")
 
     on_load(function (package)
         local v = package:version()
