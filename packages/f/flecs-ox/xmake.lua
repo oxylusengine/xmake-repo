@@ -6,7 +6,7 @@ package("flecs-ox")
     add_urls("https://github.com/SanderMertens/flecs/archive/refs/tags/$(version).tar.gz",
              "https://github.com/SanderMertens/flecs.git")
 
-    add_versions("v4.1.0", "9e06477db0fdf9317bf583ff4b1318622283165f")
+    add_versions("v4.1.0", "95293c6ba58d84c2b2b28e9a12c3fbab4bde8721")
 
     add_deps("cmake")
 
