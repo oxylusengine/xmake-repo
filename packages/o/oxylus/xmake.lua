@@ -5,12 +5,13 @@ package("oxylus")
 
     add_urls("https://github.com/oxylusengine/Oxylus.git")
 
-    add_versions("v1.0.0", "aaf9d0b7fb1226e28875d89defa640823f87eb1c")
+    add_versions("v1.0.0", "ca9c46a1b79e374bf147a596a4266f368409d0d9")
 
     set_policy("package.strict_compatibility", true)
 
     add_configs("lua_bindings", {description = "Enable lua bindings", default = true, type = "boolean"})
     add_configs("profile", {description = "Enable tracy profiling", default = false, type = "boolean"})
+    add_configs("tests", {description = "Enable tests", default = false, type = "boolean"})
 
     add_deps("vuk")
 
@@ -18,6 +19,7 @@ package("oxylus")
         local configs = {}
         configs.lua_bindings = package:config("lua_bindings")
         configs.profile = package:config("profile")
+        configs.tests = package:config("tests")
         import("package.tools.xmake").install(package, configs)
         os.cp("Oxylus/include", package:installdir())
     end)
