@@ -22,4 +22,8 @@ package("oxylus")
         configs.tests = package:config("tests")
         import("package.tools.xmake").install(package, configs)
         os.cp("Oxylus/include", package:installdir())
+
+        local shader_src = "Oxylus/src/Render/Shaders"
+        local shader_dst = package:installdir("shared", "shaders")
+        os.cp(shader_src .. "/*", shader_dst)
     end)
