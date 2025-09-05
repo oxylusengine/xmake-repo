@@ -22,6 +22,7 @@ package("vuk")
     add_versions("2025.05.06",   "73fee60d5f23bf1f14a7b1f6d8b66e19d74b956b")
     add_versions("2025.06.15",   "ab3bf6c51e31bdb3eb51f85845b83f939d4132de")
     add_versions("2025.07.09",   "8a1b873f7d0e4bb36ecd680a608a1e057655bb8c")
+    add_versions("2025.09.01",   "c9d2aeea71fe6cd41bd10ea47c38a390546b66ab")
 
     add_configs("debug_allocations", { description = "Debug VMA allocations", default = false, type = "boolean" })
     add_configs("disable_exceptions", { description = "Disalbe exceptions", default = false, type = "boolean" })
