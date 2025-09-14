@@ -28,6 +28,7 @@ package("vuk")
 
     add_configs("debug_allocations", { description = "Debug VMA allocations", default = false, type = "boolean" })
     add_configs("disable_exceptions", { description = "Disalbe exceptions", default = false, type = "boolean" })
+    add_configs("dump_exec", { description = "Dump IR", default = false, type = "boolean" })
 
     add_deps("spirv-cross 1.4.309+0")
     add_deps("function2")
@@ -46,6 +47,7 @@ package("vuk")
         local configs = {}
         configs.debug_allocations = package:config("debug_allocations")
         configs.disable_exceptions = package:config("disable_exceptions")
+        configs.dump_exec = package:config("dump_exec")
         os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), "xmake.lua")
 
         import("package.tools.xmake").install(package, configs)
