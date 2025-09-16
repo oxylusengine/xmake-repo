@@ -29,19 +29,6 @@ package("enet-ox")
             {
                 if (enet_initialize () != 0)
                     return;
-
-                ENetAddress address;
-                ENetHost* server;
-                enet_address_build_any(&address, ENET_ADDRESS_TYPE_IPV6);
-                address.port = 1234;
-                server = enet_host_create (ENET_ADDRESS_TYPE_ANY, &address, 32, 2, 0, 0);
-                if (server == NULL)
-                    return;
-
-                ENetEvent event;
-                while (enet_host_service (server, &event, 1000) > 0);
-
-                enet_host_destroy(server);
                 enet_deinitialize();
             }
         ]]}, {includes = {"enet.h"}}))
