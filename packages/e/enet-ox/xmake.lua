@@ -20,6 +20,7 @@ package("enet-ox")
         table.insert(configs, "-DENET_TEST=" .. (package:config("test") and "ON" or "OFF"))
         table.insert(configs, "-DENET_USE_MORE_PEERS=" .. (package:config("use_more_peers") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+        package:add("includedirs", "include")
    end)
 
     on_test(function (package)
@@ -43,5 +44,5 @@ package("enet-ox")
                 enet_host_destroy(server);
                 enet_deinitialize();
             }
-        ]]}, {includes = {"enet/include/enet.h"}}))
+        ]]}, {includes = {"enet.h"}}))
     end)
