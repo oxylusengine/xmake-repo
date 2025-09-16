@@ -1,4 +1,4 @@
-package("enet")
+package("enet-ox")
     set_homepage("https://github.com/zpl-c/enet")
     set_description("ENet reliable UDP networking library")
     set_license("MIT")
