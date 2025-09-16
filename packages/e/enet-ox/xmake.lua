@@ -12,16 +12,14 @@ package("enet-ox")
         add_syslinks("winmm", "ws2_32")
     end
 
-    on_load("windows", "mingw", function (package)
-        if package:config("shared") then
-            package:add("defines", "ENET_DLL")
-        end
-    end)
-
     on_install(function (package)
         local configs = {}
-        configs.examples = false
-        import("package.tools.xmake").install(package, configs)
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DENET_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DENET_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DENET_TEST=" .. (package:config("test") and "ON" or "OFF"))
+        table.insert(configs, "-DENET_USE_MORE_PEERS=" .. (package:config("use_more_peers") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs)
    end)
 
     on_test(function (package)
