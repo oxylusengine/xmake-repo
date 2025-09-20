@@ -17,16 +17,6 @@ option("debug_allocations")
     set_showmenu(true)
     add_defines("VUK_DEBUG_ALLOCATIONS=1", { force = true, public = true })
 
-option("disable_exceptions")
-    set_default(false)
-    set_showmenu(true)
-    add_defines("VUK_DISABLE_EXCEPTIONS=1", { force = true, public = true })
-
-option("dump_exec")
-    set_default(false)
-    set_showmenu(true)
-    add_defines("VUK_DUMP_EXEC=1", { force = true, public = true })
-
 target("vuk")
     set_kind("static")
     add_languages("cxx20")
@@ -35,7 +25,7 @@ target("vuk")
     add_files("src/*.cpp")
     add_files("src/runtime/**.cpp")
 
-    set_options("debug_allocations", "disable_exceptions", "dump_exec")
+    set_options("debug_allocations")
 
     -- public packages
     add_packages(
