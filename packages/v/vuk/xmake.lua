@@ -32,10 +32,6 @@ package("vuk")
     add_deps("function2")
 
     on_load(function (package)
-        if package:config("disable_exceptions") then
-            package:add("defines", "VUK_DISABLE_EXCEPTIONS=1")
-        end
-
         if package:config("debug_allocations") then
             package:add("defines", "VUK_DEBUG_ALLOCATIONS=1")
         end

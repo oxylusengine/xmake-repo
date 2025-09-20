@@ -8,7 +8,7 @@ add_requires("plf_colony v7.41")
 add_requires("robin-hood-hashing 3.11.5")
 add_requires("stb 2024.06.01")
 add_requires("function2 4.2.4")
-add_requires("spirv-cross 1.4.309+0")
+add_requires("spirv-cross 1.4.309+0", {configs = {exceptions = false}, system = false})
 add_requires("small_vector 2024.12.23")
 add_requires("vk-bootstrap v1.4.307")
 
