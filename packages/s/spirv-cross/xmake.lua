@@ -12,8 +12,6 @@ package("spirv-cross")
     add_versions("1.3.268+0", "2de1265fca722929785d9acdec4ab728c47a0254")
     add_versions("1.4.309+0", "2c32b6bf86f3c4a5539aa1f0bacbd59fe61759cf")
 
-    add_configs("exceptions", {description = "Enable exception handling", default = true, type = "boolean"})
-
     add_deps("cmake")
 
     if is_plat("windows") then
@@ -39,19 +37,12 @@ package("spirv-cross")
             "-DSPIRV_CROSS_ENABLE_CPP=OFF",
             "-DSPIRV_CROSS_ENABLE_REFLECT=OFF",
             "-DSPIRV_CROSS_ENABLE_C_API=OFF",
-            "-DSPIRV_CROSS_ENABLE_UTIL=OFF"
+            "-DSPIRV_CROSS_ENABLE_UTIL=OFF",
+            "-DSPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS=ON"
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
 
         local cxflags
-        if package:config("exceptions") then
-            table.insert(configs, "-DSPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS=OFF")
-            if package:is_plat("windows") and package:has_tool("cxx", "cl", "clang_cl") then
-                cxflags = {"/EHsc"}
-            end
-        else
-            table.insert(configs, "-DSPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS=ON")
-        end
         if package:is_plat("windows") and package:is_debug() then
             cxflags = cxflags or {}
             table.insert(cxflags, "/FS")
