@@ -37,7 +37,7 @@ package("vuk")
         end
     end)
 
-    on_install("windows|x64", "linux|x86_64", function (package)
+    on_install("windows|x64", "macosx|x86_64", "macosx|arm64", "linux|x86_64", "linux|arm64", function (package)
         local configs = {}
         configs.debug_allocations = package:config("debug_allocations")
         os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), "xmake.lua")
