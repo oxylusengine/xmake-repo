@@ -45,8 +45,13 @@ package("shader-slang")
     on_install("windows|x64", "macosx|x86_64", "macosx|arm64", "linux|x86_64", "linux|arm64", function (package)
         os.cp("include/*.h", package:installdir("include"))
 
-        os.trycp("lib/libslang.*", package:installdir("lib"))
-        os.trycp("bin/libslang.*", package:installdir("lib"))
+        if package:is_plat("windows") then
+            os.trycp("lib/slang.*", package:installdir("lib"))
+            os.trycp("bin/slang.*", package:installdir("lib"))
+        else
+            os.trycp("lib/libslang.*", package:installdir("lib"))
+            os.trycp("bin/libslang.*", package:installdir("lib"))
+        end
 
         os.trycp("lib/libslang-glslang.*", package:installdir("modules"))
         os.trycp("bin/libslang-glslang.*", package:installdir("modules"))
