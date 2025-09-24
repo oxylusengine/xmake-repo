@@ -48,6 +48,9 @@ package("shader-slang")
         os.trycp("lib/*slang.*", package:installdir("lib"))
         os.trycp("bin/*slang.*", package:installdir("lib"))
 
+        os.trycp("lib/libslang-glslang.*", package:installdir("modules"))
+        os.trycp("bin/libslang-glslang.*", package:installdir("modules"))
+
         os.trycp("lib/*slang-glslang.*", package:installdir("modules"))
         os.trycp("bin/*slang-glslang.*", package:installdir("modules"))
 
