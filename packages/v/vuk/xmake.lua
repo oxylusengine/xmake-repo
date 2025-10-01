@@ -28,11 +28,6 @@ package("vuk")
 
     add_configs("debug_allocations", { description = "Debug VMA allocations", default = false, type = "boolean" })
 
-    if is_plat("macosx") then
-        add_cxflags("-fno-common")
-        add_cxflags("-fvisibility=hidden")
-    end
-
     add_deps("spirv-cross 1.4.309+0")
     add_deps("function2")
 
