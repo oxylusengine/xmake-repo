@@ -61,6 +61,7 @@ target("vuk")
         add_cxflags("-fno-common")
         add_cxflags("-ftls-model=initial-exec")
         add_cxflags("-fpie")
+        add_cxflags("-femulated-tls")
     end
 
     on_config(function (target)
