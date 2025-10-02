@@ -60,7 +60,7 @@ target("vuk")
     if is_plat("macosx") then
         add_cxflags("-fno-common")
         add_cxflags("-ftls-model=initial-exec")
-        set_policy("build.optimization.lto", false)
+        add_cxflags("-fpie")
     end
 
     on_config(function (target)
