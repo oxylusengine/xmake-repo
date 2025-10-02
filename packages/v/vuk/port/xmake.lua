@@ -57,6 +57,11 @@ target("vuk")
             { public = true })
     end
 
+    if is_os("macosx") then
+        target:add("cxflags", "-fno-common")
+        target:add("cxflags", "-ftls-model=initial-exec")
+    end
+
     on_config(function (target)
         if target:has_tool("cxx", "msvc", "cl") then
             target:add("defines", "VUK_COMPILER_MSVC=1", { force = true, public = true })
