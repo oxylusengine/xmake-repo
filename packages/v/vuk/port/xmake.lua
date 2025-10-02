@@ -57,9 +57,9 @@ target("vuk")
             { public = true })
     end
 
-    if is_os("macosx") then
-        target:add("cxflags", "-fno-common")
-        target:add("cxflags", "-ftls-model=initial-exec")
+    if is_plat("macosx") then
+        add_cxflags("-fno-common")
+        add_cxflags("-ftls-model=initial-exec")
     end
 
     on_config(function (target)
