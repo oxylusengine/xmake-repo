@@ -2,7 +2,7 @@ package("vuk")
     set_homepage("https://github.com/martty")
     set_license("MIT")
 
-    add_urls("https://github.com/hatrickek/vuk.git")
+    add_urls("https://github.com/martty/vuk.git")
 
     add_versions("2025.02.26",   "257c1629aaa4200071fb752eb24894d05ce367d4")
     add_versions("2025.02.26.1", "bad2fe0a1e9c355bc2e9533e40d9783cef1b6f07")
@@ -25,7 +25,7 @@ package("vuk")
     add_versions("2025.09.01",   "c9d2aeea71fe6cd41bd10ea47c38a390546b66ab")
     add_versions("2025.09.14",   "b4644f1b45264a577428011a3f2e730d791a4c3e")
     add_versions("2025.09.14.1", "6f1f4f1338a18871114223c21de93733f72f5f37")
-    add_versions("2025.09.14.2", "b9326a0b3e070c9775718b47cdf42361fd66df0b")
+    add_versions("2025.09.14.2", "1f61297f98aba58aa555f9951a7b78310c74baac")
 
     add_configs("debug_allocations", { description = "Debug VMA allocations", default = false, type = "boolean" })
 
