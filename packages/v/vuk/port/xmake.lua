@@ -47,6 +47,7 @@ target("vuk")
 
     if is_os("windows") then
         add_defines(
+            "VUK_OS_WINDOWS",
             "NOMINMAX",
             "VC_EXTRALEAN",
             "WIN32_LEAN_AND_MEAN",
@@ -57,11 +58,16 @@ target("vuk")
             { public = true })
     end
 
-    if is_plat("macosx") then
+    if is_os("macosx") then
+        add_defines("VUK_OS_APPLE")
         add_cxflags("-fno-common")
         add_cxflags("-ftls-model=initial-exec")
         add_cxflags("-fpie")
         add_cxflags("-femulated-tls")
+    end
+
+    if is_os("linux") then
+        add_defines("VUK_OS_LINUX")
     end
 
     on_config(function (target)
