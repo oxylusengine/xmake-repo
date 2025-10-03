@@ -60,10 +60,6 @@ target("vuk")
 
     if is_os("macosx") then
         add_defines("VUK_OS_APPLE")
-        add_cxflags("-fno-common")
-        add_cxflags("-ftls-model=initial-exec")
-        add_cxflags("-fpie")
-        add_cxflags("-femulated-tls")
     end
 
     if is_os("linux") then
