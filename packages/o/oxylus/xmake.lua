@@ -13,7 +13,7 @@ package("oxylus")
     add_configs("profile", {description = "Enable tracy profiling", default = false, type = "boolean"})
     add_configs("tests", {description = "Enable tests", default = false, type = "boolean"})
 
-    add_deps("vuk")
+    add_deps("vuk", { order = true })
 
     on_install(function (package)
         local configs = {}
