@@ -30,6 +30,11 @@ package("oxylus")
     add_deps("loguru v2.1.0", {configs={fmt=true},system=false})
     add_deps("simdjson-ox v3.12.2")
 
+    add_defines(
+        "GLM_ENABLE_EXPERIMENTAL",
+        "GLM_FORCE_DEPTH_ZERO_TO_ONE",
+        { public = true })
+
     on_install(function (package)
         local configs = {}
         configs.lua_bindings = package:config("lua_bindings")
