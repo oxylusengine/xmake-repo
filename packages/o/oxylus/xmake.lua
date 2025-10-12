@@ -14,7 +14,6 @@ package("oxylus")
     add_configs("tests", {description = "Enable tests", default = false, type = "boolean"})
 
     add_deps("flecs-ox v4.1.0")
-    add_deps("imguizmo 1.91.3+wip")
     add_deps("imgui v1.92.0-docking", {configs={wchar32=true}})
     add_deps("vk-bootstrap v1.4.307", {debug=true,system=false})
     add_deps("vuk 2025.09.14.2", {configs={debug_allocations=false},debug=true,private=false})
