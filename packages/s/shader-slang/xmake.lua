@@ -9,7 +9,7 @@ package("shader-slang")
 
         add_versions("v2025.10.4", "f4199d9cb32f93410444713adfe880da2b665a9e13f2f8e23fdbff06068a9ff3")
         add_versions("v2025.12.1", "02018cc923a46c434e23b166ef13c14165b0a0c4b863279731c4f6c4898fbf8e")
-        add_versions("v2025.15.1", "cabaaecf1727040e4b24dfe015c303a709f5dd2d68d5a3dd2b73a50828f29fc5")
+        add_versions("v2025.15.1", "c1c94c182480df4d2914731b280d5e6ae9ea3677fdf8871a4e46abc4ef81d976")
     elseif is_host("linux") then
         if is_arch("x86_64") then
 
