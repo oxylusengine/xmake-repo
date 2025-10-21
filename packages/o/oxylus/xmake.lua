@@ -47,6 +47,7 @@ package("oxylus")
         configs.lua_bindings = package:config("lua_bindings")
         configs.profile = package:config("profile")
         configs.tests = package:config("tests")
+        configs.editor = false
         import("package.tools.xmake").install(package, configs)
         os.cp("Oxylus/include", package:installdir())
 
