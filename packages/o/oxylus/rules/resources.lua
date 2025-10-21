@@ -12,7 +12,7 @@ rule("install_resources")
             rel_output = path.join(rel_output, rel_root)
         end
 
-        local abs_output = path.absolute(rel_output) .. "/" .. path.filename(sourcefile)
+        local abs_output = path.join(path.absolute(rel_output), path.filename(sourcefile))
         batchcmds:show_progress(opt.progress, "${color.build.object}copying resource file %s", sourcefile)
         batchcmds:cp(abs_source, abs_output)
 
