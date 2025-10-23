@@ -4,7 +4,7 @@ package("ktx-ox")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/KhronosGroup/KTX-Software/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/KhronosGroup/KTX-Software.git", {submodules = false})
+             "https://github.com/KhronosGroup/KTX-Software.git")
 
     add_versions("v4.4.0", "3585d76edcdcbe3a671479686f8c81c1c10339f419e4b02a9a6f19cc6e4e0612")
 
