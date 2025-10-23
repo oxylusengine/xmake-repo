@@ -42,6 +42,32 @@ package("oxylus")
         "GLM_FORCE_DEPTH_ZERO_TO_ONE",
         { public = true })
 
+    if is_plat("windows") then
+        add_defines("_UNICODE", { force = true, public = true  })
+        add_defines("UNICODE", { force = true, public = true  })
+        add_defines("WIN32_LEAN_AND_MEAN", { force = true, public = true  })
+        add_defines("VC_EXTRALEAN", { force = true, public = true  })
+        add_defines("NOMINMAX", { force = true, public = true  })
+        add_defines("_WIN32", { force = true, public = true  })
+        add_defines("_CRT_SECURE_NO_WARNINGS", { force = true, public = true  })
+        add_defines("OX_PLATFORM_WINDOWS", { public = true })
+    elseif is_plat("linux") then
+        add_defines("OX_PLATFORM_LINUX", { public = true })
+    elseif is_plat("macosx") then
+        add_defines("OX_PLATFORM_MACOSX", { public = true })
+    end
+
+    if is_mode("debug")  then
+        add_defines("OX_DEBUG", { public = true })
+        add_defines("_DEBUG", { public = true })
+    elseif is_mode("release") or is_mode("releasedbg") then
+        add_defines("OX_RELEASE", { public = true })
+        add_defines("NDEBUG", { public = true })
+    elseif is_mode("dist") then
+        add_defines("OX_DISTRIBUTION", { public = true })
+        add_defines("NDEBUG", { public = true })
+    end
+
     on_install(function (package)
         local configs = {}
         configs.lua_bindings = package:config("lua_bindings")
