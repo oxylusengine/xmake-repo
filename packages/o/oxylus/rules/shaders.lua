@@ -6,7 +6,7 @@ rule("install_shaders")
             local shader_src = path.join(oxylus_pkg:installdir(), "shared", "shaders")
             local shader_dst = path.join(target:targetdir(), output_dir)
 
-            ox.mkdir(shader_dst)
+            os.mkdir(shader_dst)
             os.cp(shader_src .. "/*", shader_dst)
         end
     end)
