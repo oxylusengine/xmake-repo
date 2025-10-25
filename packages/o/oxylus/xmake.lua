@@ -68,6 +68,14 @@ package("oxylus")
         add_defines("NDEBUG", { public = true })
     end
 
+    add_cxxflags(
+        "/permissive-",
+        "/EHsc",
+        "/bigobj",
+        "-wd4100",
+        "/Zc:preprocessor",
+        { public = true, tools = { "msvc", "cl", "clang_cl", "clang-cl" } })
+
     on_install(function (package)
         local configs = {}
         configs.lua_bindings = package:config("lua_bindings")
