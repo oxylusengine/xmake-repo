@@ -3,70 +3,57 @@ package("shader-slang")
     set_description("Making it easier to work with shaders")
     set_license("MIT")
 
-    if is_host("windows") then
-        add_urls("https://github.com/shader-slang/slang/releases/download/v$(version)/slang-$(version)-windows-x86_64.tar.gz",
-            {version = function (version) return version:gsub("v", "") end})
+    add_urls("https://github.com/shader-slang/slang.git", { submodules = false })
 
-        add_versions("v2025.10.4", "f4199d9cb32f93410444713adfe880da2b665a9e13f2f8e23fdbff06068a9ff3")
-        add_versions("v2025.12.1", "02018cc923a46c434e23b166ef13c14165b0a0c4b863279731c4f6c4898fbf8e")
-        add_versions("v2025.15.1", "c1c94c182480df4d2914731b280d5e6ae9ea3677fdf8871a4e46abc4ef81d976")
-    elseif is_host("linux") then
-        if is_arch("x86_64") then
+    add_versions("v2025.24.2", "ca70f001276c8a0ea16629b9d53ba6077da462d6")
 
-            add_urls("https://github.com/shader-slang/slang/releases/download/v$(version)/slang-$(version)-linux-x86_64.tar.gz",
-                {version = function (version) return version:gsub("v", "") end})
+    add_deps("cmake")
+    add_deps("miniz", {system = false})
+    add_deps("lz4 v1.10.0", {system = false})
+    add_deps("spirv-headers 1.4.335+0")
+    add_deps("unordered_dense")
+    add_deps("lua_static v5.4.7")
 
-            add_versions("v2025.10.4", "c2edcfdada38feb345725613c516a842700437f6fa55910b567b9058c415ce8f")
-            add_versions("v2025.12.1", "8f34b98391562ce6f97d899e934645e2c4466a02e66b69f69651ff1468553b27")
-            add_versions("v2025.15.1", "df3834d350beee7d6f14b8f38ee164038e8b11e70b17e2544fbf49a4d532ddb3")
-        end
+    on_install("windows|x64", "macosx", "linux|x86_64", function (package)
+        io.replace("cmake/SlangTarget.cmake", [[set_property(TARGET ${target} PROPERTY SUFFIX ".dylib")]], "", {plain = true})
+        -- GET THE SLOPWARE OUT OF MY FUCKING COMPILER
+        io.replace("source/standard-modules/CMakeLists.txt", [[add_subdirectory(neural)]], "", {plain = true})
+        io.replace("CMakeLists.txt", [[add_subdirectory(source/slang-glsl-module)]], "", {plain = true})
+        -- io.replace("CMakeLists.txt", [[add_library(lz4_static ALIAS LZ4::lz4)]], "add_library(lz4 ALIAS lz4::lz4)", {plain = true})
+        io.replace("CMakeLists.txt", [[add_subdirectory(external)]], "", {plain = true})
 
-        if is_arch("arm64") then
-            add_urls("https://github.com/shader-slang/slang/releases/download/v$(version)/slang-$(version)-linux-aarch64.tar.gz",
-                {version = function (version) return version:gsub("v", "") end})
+        local lua = package:dep("lua_static"):fetch()
 
-            add_versions("v2025.10.4", "c2edcfdada38feb345725613c516a842700437f6fa55910b567b9058c415ce8f")
-            add_versions("v2025.12.1", "d42edf9e778a63f532a25ae8b9f37e02ee7daa68e3e6e5d884b7ad0956ef253d")
-            add_versions("v2025.15.1", "c9ecffb085dfe0027135b73032fc04d74a31206b766779d61547c7e30e747af4")
-        end
-    elseif is_host("macosx") then
-        if is_arch("arm64") then
-            add_urls("https://github.com/shader-slang/slang/releases/download/v$(version)/slang-$(version)-macos-aarch64.tar.gz",
-                {version = function (version) return version:gsub("v", "") end})
+        local configs = {
+            "-DSLANG_ENABLE_TESTS=OFF",
+            "-DSLANG_ENABLE_EXAMPLES=OFF",
+            "-DSLANG_USE_SYSTEM_MINIZ=ON",
+            "-DSLANG_USE_SYSTEM_LZ4=ON",
+            "-DSLANG_USE_SYSTEM_SPIRV_HEADERS=ON",
+            "-DSLANG_USE_SYSTEM_UNORDERED_DENSE=ON",
+            "-DSLANG_USE_SYSTEM_VULKAN_HEADERS=OFF",
+            "-DSLANG_USE_SYSTEM_SPIRV_TOOLS=OFF",
+            "-DSLANG_USE_SYSTEM_GLSLANG=OFF",
+            "-DSLANG_OVERRIDE_LUA_PATH=" .. table.concat(lua.includedirs or lua.sysincludedirs, ";"),
 
-            add_versions("v2025.12.1", "205c6f61f6357ba3472551fa48d922f8220836c757d9b9059133938bdade02ae")
-            add_versions("v2025.15.1", "459e197bf0f379c37b83d7d13885858ab9d17614ae56fc22f5a1af76614ecd06")
-        end
+            "-DSLANG_ENABLE_DXIL=OFF",
+            "-DSLANG_ENABLE_PREBUILT_BINARIES=OFF",
+            "-DSLANG_ENABLE_GFX=OFF",
+            "-DSLANG_ENABLE_SLANGD=OFF",
+            "-DSLANG_ENABLE_SLANGC=OFF",
+            "-DSLANG_ENABLE_SLANGI=OFF",
+            "-DSLANG_ENABLE_SLANGRT=OFF",
+            "-DSLANG_ENABLE_SLANG_GLSLANG=OFF",
+            "-DSLANG_ENABLE_SLANG_RHI=OFF",
+            "-DSLANG_ENABLE_TESTS=OFF",
+            "-DSLANG_ENABLE_EXAMPLES=OFF",
+            "-DSLANG_ENABLE_REPLAYER=OFF",
+            "-DSLANG_SLANG_LLVM_FLAVOR=DISABLE",
+        }
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DSLANG_LIB_TYPE=" .. (package:config("shared") and "SHARED" or "STATIC"))
 
-        if is_arch("x86_64") then
-            add_urls("https://github.com/shader-slang/slang/releases/download/v$(version)/slang-$(version)-macos-x86_64.tar.gz",
-                {version = function (version) return version:gsub("v", "") end})
-
-            add_versions("v2025.12.1", "6c36eeb4dea30c614da90b970a998da8460c04688aa1ef60b673c23da424bb2a")
-            add_versions("v2025.15.1", "8ca046224defe4574efcca2ad863b14a3a703bf57da490e095e97f5d5907489c")
-        end
-    end
-
-    on_install("windows|x64", "macosx|x86_64", "macosx|arm64", "linux|x86_64", "linux|arm64", function (package)
-        os.cp("include/*.h", package:installdir("include"))
-
-        if package:is_plat("windows") then
-            os.trycp("lib/slang.*", package:installdir("lib"))
-            os.trycp("bin/slang.*", package:installdir("lib"))
-        else
-            os.trycp("lib/libslang.*", package:installdir("lib"))
-            os.trycp("bin/libslang.*", package:installdir("lib"))
-        end
-
-        os.trycp("lib/libslang-glslang.*", package:installdir("modules"))
-        os.trycp("bin/libslang-glslang.*", package:installdir("modules"))
-
-        os.trycp("lib/*slang-glslang.*", package:installdir("modules"))
-        os.trycp("bin/*slang-glslang.*", package:installdir("modules"))
-
-        os.trycp("lib/*slang-glsl-module.*", package:installdir("modules"))
-        os.trycp("bin/*slang-glsl-module.*", package:installdir("modules"))
-
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"lz4"}})
         package:addenv("PATH", "bin")
     end)
 
@@ -81,6 +68,4 @@ package("shader-slang")
             }
         ]] }, {configs = {languages = "c++17"}}))
     end)
-
 package_end()
-
