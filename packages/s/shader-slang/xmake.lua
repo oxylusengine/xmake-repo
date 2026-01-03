@@ -6,7 +6,7 @@ package("shader-slang")
     add_urls("https://github.com/shader-slang/slang.git", { submodules = false })
 
     add_versions("v2025.15.1", "74c39eaa3dbd6ca55a383afca51ec18962838f08")
-    add_versions("v2025.24.2", "ca70f001276c8a0ea16629b9d53ba6077da462d6")
+    -- add_versions("v2025.24.2", "ca70f001276c8a0ea16629b9d53ba6077da462d6")
 
     add_deps("cmake")
     add_deps("miniz", {system = false})
@@ -17,9 +17,14 @@ package("shader-slang")
 
     on_install("windows|x64", "macosx", "linux|x86_64", function (package)
         io.replace("cmake/SlangTarget.cmake", [[set_property(TARGET ${target} PROPERTY SUFFIX ".dylib")]], "", {plain = true})
+        io.replace("cmake/SlangTarget.cmake", [[set_default_compile_options(${target} USE_EXTRA_WARNINGS)]], "set_default_compile_options(${target} USE_FEWER_WARNINGS)", {plain = true})
+        io.replace("cmake/CompilerFlags.cmake", "[^\n]*Wall[^\n]*", "")
+        io.replace("cmake/CompilerFlags.cmake", "[^\n]*Werror[^\n]*", "")
+        io.replace("cmake/CompilerFlags.cmake", "[^\n]*WX[^\n]*", "")
         -- GET THE SLOPWARE OUT OF MY FUCKING COMPILER
         -- io.replace("source/standard-modules/CMakeLists.txt", [[add_subdirectory(neural)]], "", {plain = true})
         io.replace("CMakeLists.txt", [[add_subdirectory(source/slang-glsl-module)]], "", {plain = true})
+        io.replace("CMakeLists.txt", [[add_subdirectory(source/slang-glslang)]], "", {plain = true})
         -- io.replace("CMakeLists.txt", [[add_library(lz4_static ALIAS LZ4::lz4)]], "add_library(lz4 ALIAS lz4::lz4)", {plain = true})
         io.replace("CMakeLists.txt", [[add_subdirectory(external)]], "", {plain = true})
 
@@ -52,7 +57,13 @@ package("shader-slang")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DSLANG_LIB_TYPE=" .. (package:config("shared") and "SHARED" or "STATIC"))
 
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"lz4"}})
+        local opt = {}
+        opt.packagedeps = {"lz4"}
+        if package:is_plat("windows") and package:has_tool("cxx", "cl", "clang_cl") then
+            opt.cxflags = {"/EHsc"}
+        end
+
+        import("package.tools.cmake").install(package, configs, opt)
         package:addenv("PATH", "bin")
     end)
 
