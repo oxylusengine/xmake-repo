@@ -7,18 +7,19 @@ package("shader-slang")
 
     add_versions("v2025.15.1", "74c39eaa3dbd6ca55a383afca51ec18962838f08")
     add_versions("v2025.24.2", "ca70f001276c8a0ea16629b9d53ba6077da462d6")
+    add_versions("v2026.4.2", "5cde9ea5ff3b6c657978de54d2241a86cb3528b1")
 
     add_deps("cmake")
     add_deps("miniz", {system = false})
     add_deps("lz4 v1.10.0", {system = false})
-    add_deps("spirv-headers 1.4.309+0")
+    add_deps("spirv-headers 1.4.341+0")
     add_deps("unordered_dense")
     add_deps("lua_static v5.4.7")
 
     on_install("windows|x64", "macosx", "linux|x86_64", function (package)
         io.replace("cmake/SlangTarget.cmake", [[set_property(TARGET ${target} PROPERTY SUFFIX ".dylib")]], "", {plain = true})
         -- GET THE SLOPWARE OUT OF MY FUCKING COMPILER
-        -- io.replace("source/standard-modules/CMakeLists.txt", [[add_subdirectory(neural)]], "", {plain = true})
+        io.replace("source/standard-modules/CMakeLists.txt", [[add_subdirectory(neural)]], "", {plain = true})
         io.replace("CMakeLists.txt", [[add_subdirectory(source/slang-glsl-module)]], "", {plain = true})
         -- io.replace("CMakeLists.txt", [[add_library(lz4_static ALIAS LZ4::lz4)]], "add_library(lz4 ALIAS lz4::lz4)", {plain = true})
         io.replace("CMakeLists.txt", [[add_subdirectory(external)]], "", {plain = true})
