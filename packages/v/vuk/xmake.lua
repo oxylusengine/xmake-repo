@@ -5,6 +5,7 @@ package("vuk")
     add_urls("https://github.com/martty/vuk.git")
 
     add_versions("2025.09.14.2", "87bd224ea4110b7b909b12ace60ace960330e6e9")
+    add_versions("2026.04.26", "c399bcd9d42e1b0282f007c8aa1bb3019c760f35")
 
     add_configs("debug_allocations", { description = "Debug VMA allocations", default = false, type = "boolean" })
 
