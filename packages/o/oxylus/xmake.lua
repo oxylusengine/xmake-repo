@@ -35,7 +35,7 @@ package("oxylus")
     add_deps("sol2 c1f95a773c6f8f4fde8ca3efe872e7286afe4444", {configs = { includes_lua = false }})
     add_deps("toml++ v3.4.0")
     add_deps("loguru v2.1.0", {configs={fmt=true},system=false})
-    add_deps("simdjson v4.2.4")
+    add_deps("simdjson v4.0.6")
 
     add_defines(
         "GLM_ENABLE_EXPERIMENTAL",
