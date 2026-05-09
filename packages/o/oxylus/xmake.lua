@@ -37,6 +37,7 @@ package("oxylus")
     add_deps("toml++ v3.4.0")
     add_deps("loguru v2.1.0", {configs={fmt=true},system=false})
     add_deps("simdjson v4.0.6")
+    add_deps("svector v1.0.3")
 
     add_defines(
         "GLM_ENABLE_EXPERIMENTAL",
