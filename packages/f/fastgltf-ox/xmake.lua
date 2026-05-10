@@ -22,7 +22,7 @@ package("fastgltf-ox")
     end
 
     add_deps("cmake")
-    add_deps("simdjson-ox")
+    add_deps("simdjson")
 
     on_install("windows|x64", "mingw|x86_64", "macosx|x86_64", "macosx|arm64", "linux|x86_64", "linux|arm64", function (package)
         local configs = {}
