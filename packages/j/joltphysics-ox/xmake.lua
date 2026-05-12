@@ -4,7 +4,8 @@ package("joltphysics-ox")
     set_license("MIT")
 
     add_urls("https://github.com/jrouwe/JoltPhysics/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/jrouwe/JoltPhysics.git")
+    "https://github.com/jrouwe/JoltPhysics.git")
+    add_versions("v5.5.0", "3dae862a32c9092fca5b17f8e5d32cd57e035d30c3145c00040f13ca58a866df")
     add_versions("v5.4.0+fix", "de7cf0a2625f8ff8c60e0a2d52e935d26f9fe4fb")
     add_versions("v5.4.0", "1d2fdc33ef9a2da69efd704adc0a97da7c6ed698c2bded04b0c36f31207b0829")
     add_versions("v5.3.0", "e7f9621e480646c434150e1fbe3a9410f4ec4b04ffe54791e0678326b741b918")
@@ -39,7 +40,7 @@ package("joltphysics-ox")
     add_configs("rtti", { description = "Compile the library with C++ RTTI enabled. This adds some overhead and Jolt doesn't use RTTI so by default it is off.", default = false, type = "boolean" })
     add_configs("symbols", { description = "When turning this option on, the library will be compiled with debug symbols", default = false, type = "boolean" })
     add_configs("symbol_format", { description = "Which type of debug symbols to generate", default = "", type = "string" })
-    add_configs("enable_floating_point_exceptions", { description = "enables floating point exceptions", default = true, type = "boolean" })
+    add_configs("enable_floating_point_exceptions", { description = "enables floating point exceptions", default = false, type = "boolean" })
 
     if is_arch("i386", "x86", "x64", "x86_64") then
         add_configs("inst_avx", { description = "Enable AVX CPU instructions (x86/x64 only)", default = false, type = "boolean" })
