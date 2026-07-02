@@ -64,7 +64,20 @@ package("shader-slang")
         os.trycp("lib/*slang-glsl-module*", package:installdir("modules"))
         os.trycp("bin/*slang-glsl-module*", package:installdir("modules"))
 
+        -- slang ships libslang-compiler.so, not libshader-slang.so, so the
+        -- link name does not match the package name and xmake's auto-rpath
+        -- detection does not kick in. Declare everything explicitly. The
+        -- rpath must be absolute because a bare "lib" would be resolved
+        -- relative to the process cwd, not the package installdir.
+        package:add("links", "slang-compiler")
+        package:add("linkdirs", "lib")
+        if package:is_plat("linux", "macosx") then
+            package:add("rpathdirs", package:installdir("lib"))
+        end
+
+        -- slang looks up its backend modules (glslang, glsl-module) via PATH.
         package:addenv("PATH", "bin")
+        package:addenv("PATH", "modules")
     end)
 
 package_end()
