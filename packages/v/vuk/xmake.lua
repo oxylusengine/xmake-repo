@@ -9,6 +9,9 @@ package("vuk")
     add_versions("2026.05.10", "2d67e3d9cd3951419082c163e6f570a040684df1")
     add_versions("2026.07.2", "d68e263806aad7660e05d56339a9540d553e4eba")
 
+    add_patches("2026.07.2", "patches/2026.07.2/make-ret-index-sequence.patch",
+        "54ffce12a5261f3e304b2766273b53322260c953461d947f09f3e50dad2ebc16")
+
     add_configs("debug_allocations", { description = "Debug VMA allocations", default = false, type = "boolean" })
 
     add_deps("spirv-cross 1.4.309+0")
