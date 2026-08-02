@@ -94,4 +94,20 @@ package("oxylus")
         local shader_src = "Oxylus/src/Render/Shaders"
         local shader_dst = package:installdir("shared", "shaders")
         os.cp(shader_src .. "/*", shader_dst)
+
+        -- rcli is linked with $ORIGIN as its runpath, but libResourceCompiler lands in
+        -- lib/, so keep a copy next to the executable to make it runnable from installdir.
+        local bindir = package:installdir("bin")
+        if not package:is_plat("windows") then
+            os.trycp(package:installdir("lib", "libResourceCompiler.*"), bindir)
+        end
+
+        -- Renderer::init loads a compiled engine.oxpack, so build it here. Without this
+        -- consumers only get the raw slang sources and fail to initialize the renderer.
+        if not package:is_cross() then
+            os.vrunv(path.join(bindir, "rcli"), {
+                "--config", path.absolute("OxylusEditor/Resources/engine.toml"),
+                "--output", path.join(shader_dst, "engine.oxpack"),
+            })
+        end
     end)
