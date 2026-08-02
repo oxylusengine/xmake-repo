@@ -38,6 +38,8 @@ package("oxylus")
     add_deps("loguru v2.1.0", {configs={fmt=true},system=false})
     add_deps("simdjson v4.2.4")
     add_deps("svector v1.0.3")
+    add_deps("zpp_bits v4.7.1")
+    add_deps("rmlui f7b297e2c8fc44c5e85df498dbae91762c0769a5", {configs={shared=false,lua=true},system=false})
 
     add_defines(
         "GLM_ENABLE_EXPERIMENTAL",
