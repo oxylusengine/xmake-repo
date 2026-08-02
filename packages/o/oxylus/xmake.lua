@@ -99,7 +99,7 @@ package("oxylus")
         -- lib/, so keep a copy next to the executable to make it runnable from installdir.
         local bindir = package:installdir("bin")
         if not package:is_plat("windows") then
-            os.trycp(package:installdir("lib", "libResourceCompiler.*"), bindir)
+            os.trycp(path.join(package:installdir("lib"), "libResourceCompiler.*"), bindir)
         end
 
         -- Renderer::init loads a compiled engine.oxpack, so build it here. Without this
