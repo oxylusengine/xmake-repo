@@ -64,6 +64,16 @@ package("shader-slang")
         os.trycp("lib/*slang-glsl-module*", package:installdir("modules"))
         os.trycp("bin/*slang-glsl-module*", package:installdir("modules"))
 
+        -- libslang-compiler dlopens the backend modules by bare name. On Windows that resolves
+        -- through PATH (see the addenv below), but on Linux/macOS it goes through the loader,
+        -- which searches libslang-compiler's own RUNPATH ($ORIGIN/../lib:$ORIGIN) and ignores
+        -- PATH entirely -- so spirv-opt silently fails and shaders come out unoptimized. Keep a
+        -- copy beside it so rcli works with no environment set up, which is how downstream
+        -- projects invoke it (@oxylus/compile_shaders runs it straight out of the install dir).
+        if package:is_plat("linux", "macosx") then
+            os.trycp(path.join(package:installdir("modules"), "*"), package:installdir("lib"))
+        end
+
         -- slang ships libslang-compiler.so, not libshader-slang.so, so the
         -- link name does not match the package name and xmake's auto-rpath
         -- detection does not kick in. Declare everything explicitly. The

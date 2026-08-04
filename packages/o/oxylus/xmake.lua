@@ -94,6 +94,13 @@ package("oxylus")
         local shader_dst = package:installdir("shared", "shaders")
         os.mkdir(shader_dst)
 
+        -- Consumers compiling their own shaders need the engine modules they import
+        -- (common, gpu, <fullscreen.slang>, ...). @oxylus/compile_shaders hands this
+        -- directory to rcli as an extra search path.
+        local shader_src_dst = package:installdir("shared", "shader_sources")
+        os.mkdir(shader_src_dst)
+        os.cp("Oxylus/src/Render/Shaders/*", shader_src_dst)
+
         -- RmlUI loads no font by default, so consumers have nothing to render text with
         -- unless they ship their own. These live under the editor tree but are not
         -- editor-only, so hand them to consumers through @oxylus/install_fonts.
@@ -108,8 +115,8 @@ package("oxylus")
             os.trycp(path.join(package:installdir("lib"), "libResourceCompiler.*"), bindir)
         end
 
-        -- Renderer::init loads a compiled engine.oxpack, so build it here. It is the only
-        -- shader artifact consumers get; the raw slang sources are not shipped.
+        -- Renderer::init loads a compiled engine.oxpack, so build it here. Consumers get this
+        -- prebuilt; their own shaders go through @oxylus/compile_shaders into a separate pack.
         if not package:is_cross() then
             os.vrunv(path.join(bindir, "rcli"), {
                 "--config", path.absolute("OxylusEditor/Assets/engine.toml"),
