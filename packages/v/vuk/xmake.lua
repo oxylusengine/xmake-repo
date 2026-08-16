@@ -2,12 +2,13 @@ package("vuk")
     set_homepage("https://github.com/martty")
     set_license("MIT")
 
-    add_urls("https://github.com/martty/vuk.git")
+    add_urls("https://github.com/oxylusengine/vuk.git")
 
     add_versions("2025.09.14.2", "87bd224ea4110b7b909b12ace60ace960330e6e9")
     add_versions("2026.05.03", "61abde9ddff60a38b792f193ba60c39e068c1eae")
     add_versions("2026.05.10", "2d67e3d9cd3951419082c163e6f570a040684df1")
     add_versions("2026.07.2", "d68e263806aad7660e05d56339a9540d553e4eba")
+    add_versions("2026.08.16", "ab16226ce3ff31288b6a5c0c87907da41b1a6372")
 
     add_patches("2026.07.2", "patches/2026.07.2/make-ret-index-sequence.patch",
         "54ffce12a5261f3e304b2766273b53322260c953461d947f09f3e50dad2ebc16")
