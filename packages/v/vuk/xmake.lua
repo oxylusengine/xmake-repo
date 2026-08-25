@@ -14,6 +14,7 @@ package("vuk")
     add_versions("2026.8.17.1", "dfd22ccbd1071665f31600f322eb64201ced1873")
     add_versions("2026.08.17.2", "8eafd64ed90eb1ea468ebd2fdc83043a899adf93")
     add_versions("2026.08.20", "fd5571df5789262393d1ea737b279a01832d292b")
+    add_versions("2026.08.25", "af2f933bf6e051499ac550e78585bf869d9f6f9c")
 
     add_patches("2026.07.2", "patches/2026.07.2/make-ret-index-sequence.patch",
         "54ffce12a5261f3e304b2766273b53322260c953461d947f09f3e50dad2ebc16")
