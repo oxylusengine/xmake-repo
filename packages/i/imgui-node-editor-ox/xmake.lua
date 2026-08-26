@@ -1,21 +1,20 @@
-package("imguizmo-ox")
-    set_homepage("https://github.com/CedricGuillemet/ImGuizmo")
-    set_description("Immediate mode 3D gizmo for scene editing and other controls based on Dear Imgui")
+package("imgui-node-editor-ox")
+    set_homepage("https://github.com/thedmd/imgui-node-editor")
+    set_description("Node Editor built using Dear ImGui")
     set_license("MIT")
 
-    add_urls("https://github.com/CedricGuillemet/ImGuizmo.git")
-    add_versions("1.84+wip.1", "df1c30142e7c3fb13c171aaeb328bb338fa7aaa6")
+    add_urls("https://github.com/thedmd/imgui-node-editor.git")
+    add_versions("0.9.4+wip", "021aa0ea4da13fed864bafb2a92d4c5205076866")
 
-    -- imgui 1.92.8 swapped 'thickness' and 'flags' on AddPolyline() and moved
-    -- ImDrawFlags_Closed to 1 << 9, so upstream's `true` argument now lands in
-    -- 'flags' as an invalid bit and the polyline is dropped with a user error
-    add_patches("1.84+wip.1", "patches/1.84+wip.1/imgui-1.92.8-drawflags.patch", "ccb5b3a24bc1505489eea3ef613a1c3d1e5fcf90fb82e63bf5cebc1233927f59")
+    -- libc++ does not pull std::terminate in transitively, imgui 1.92.8 swapped
+    -- 'thickness' and 'flags' on PathStroke(), and imgui >= 1.92 already defines
+    -- operator*(float, ImVec2) under IMGUI_DEFINE_MATH_OPERATORS
+    add_patches("0.9.4+wip", "patches/0.9.4+wip/libcxx-imgui-1.92.patch", "73af7d28d3cdb41c9322e6104c44219c1a9ce2eaf88917de25ad5e8c5b526f34")
 
     add_configs("wchar32", {description = "Use 32-bit ImWchar to match Dear ImGui", default = false, type = "boolean"})
     add_configs("imgui_version", {description = "Dear ImGui version to build against", type = "string"})
 
     on_load(function (package)
-        -- the patch above targets the post-1.92.8 signature
         package:add("deps", "imgui", {
             version = package:config("imgui_version") or ">=1.92.8",
             configs = {wchar32 = package:config("wchar32")}
@@ -34,11 +33,11 @@ package("imguizmo-ox")
 
             add_requires("imgui %s", {configs = %s})
 
-            target("imguizmo")
+            target("imgui-node-editor")
                 set_kind("$(kind)")
                 add_defines("IMGUI_DEFINE_MATH_OPERATORS")
-                add_files("*.cpp")
-                add_headerfiles("*.h")
+                add_files("crude_json.cpp", "imgui_canvas.cpp", "imgui_node_editor.cpp", "imgui_node_editor_api.cpp")
+                add_headerfiles("(*.h)", "(*.inl)", {prefixdir = "imgui-node-editor"})
                 add_packages("imgui")
                 if is_plat("windows") and is_kind("shared") then
                     add_rules("utils.symbols.export_all", {export_classes = true})
@@ -51,8 +50,9 @@ package("imguizmo-ox")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void test() {
-                ImGuiIO& io = ImGui::GetIO();
-                ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+                ax::NodeEditor::Config config;
+                ax::NodeEditor::EditorContext* ctx = ax::NodeEditor::CreateEditor(&config);
+                ax::NodeEditor::DestroyEditor(ctx);
             }
-        ]]}, {configs = {languages = "c++11"}, includes = {"imgui.h", "ImGuizmo.h"}}))
+        ]]}, {configs = {languages = "c++14"}, includes = {"imgui.h", "imgui-node-editor/imgui_node_editor.h"}}))
     end)

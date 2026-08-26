@@ -1,0 +1,42 @@
+diff --git a/crude_json.cpp b/crude_json.cpp
+index 078427a..2a98431 100644
+--- a/crude_json.cpp
++++ b/crude_json.cpp
+@@ -10,6 +10,7 @@
+ // CREDITS
+ //   Written by Michal Cichon
+ # include "crude_json.h"
++# include <exception>
+ # include <iomanip>
+ # include <limits>
+ # include <cstdlib>
+diff --git a/imgui_extra_math.inl b/imgui_extra_math.inl
+index 8e2347f..357e756 100644
+--- a/imgui_extra_math.inl
++++ b/imgui_extra_math.inl
+@@ -31,10 +31,12 @@ inline bool operator!=(const ImVec2& lhs, const ImVec2& rhs)
+ }
+ # endif
+ 
++/*
+ inline ImVec2 operator*(const float lhs, const ImVec2& rhs)
+ {
+     return ImVec2(lhs * rhs.x, lhs * rhs.y);
+ }
++*/
+ 
+ # if IMGUI_VERSION_NUM < 18955
+ inline ImVec2 operator-(const ImVec2& lhs)
+diff --git a/imgui_node_editor.cpp b/imgui_node_editor.cpp
+index 3ca9eb3..3275779 100644
+--- a/imgui_node_editor.cpp
++++ b/imgui_node_editor.cpp
+@@ -560,7 +560,7 @@ static void ImDrawList_AddBezierWithArrows(ImDrawList* drawList, const ImCubicBe
+ 
+         ImDrawList_PathBezierOffset(drawList, half_thickness, curve.P3, curve.P2, curve.P1, curve.P0);
+ 
+-        drawList->PathStroke(color, true, strokeThickness);
++        drawList->PathStroke(color, strokeThickness, ImDrawFlags_Closed);
+     }
+ }
+ 

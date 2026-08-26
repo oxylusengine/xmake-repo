@@ -1,3 +1,35 @@
+diff --git a/GraphEditor.cpp b/GraphEditor.cpp
+index a97f813..1784ca2 100644
+--- a/GraphEditor.cpp
++++ b/GraphEditor.cpp
+@@ -276,7 +276,7 @@ static void DisplayLinks(Delegate& delegate,
+             float highLightFactor = factor * (highlightCons ? 2.0f : 1.f);
+             for (int pass = 0; pass < 2; pass++)
+             {
+-                drawList->AddPolyline(pts.data(), ptCount, pass ? col : 0xFF000000, false, (pass ? options.mLineThickness : (options.mLineThickness * 1.5f)) * highLightFactor);
++                drawList->AddPolyline(pts.data(), ptCount, pass ? col : 0xFF000000, (pass ? options.mLineThickness : (options.mLineThickness * 1.5f)) * highLightFactor, 0);
+             }
+         }
+     }
+diff --git a/ImCurveEdit.cpp b/ImCurveEdit.cpp
+index 3d69cf5..579a2cf 100644
+--- a/ImCurveEdit.cpp
++++ b/ImCurveEdit.cpp
+@@ -124,11 +124,11 @@ namespace ImCurveEdit
+             ret = 2;
+       }
+       if (edited)
+-         draw_list->AddPolyline(offsets, 4, 0xFFFFFFFF, true, 3.0f);
++         draw_list->AddPolyline(offsets, 4, 0xFFFFFFFF, 3.0f, ImDrawFlags_Closed);
+       else if (ret)
+-         draw_list->AddPolyline(offsets, 4, 0xFF80B0FF, true, 2.0f);
++         draw_list->AddPolyline(offsets, 4, 0xFF80B0FF, 2.0f, ImDrawFlags_Closed);
+       else
+-         draw_list->AddPolyline(offsets, 4, 0xFF0080FF, true, 2.0f);
++         draw_list->AddPolyline(offsets, 4, 0xFF0080FF, 2.0f, ImDrawFlags_Closed);
+ 
+       return ret;
+    }
 diff --git a/ImGuizmo.cpp b/ImGuizmo.cpp
 index b922e5a..19e9633 100755
 --- a/ImGuizmo.cpp
