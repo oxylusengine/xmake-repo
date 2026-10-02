@@ -27,7 +27,9 @@ target("basisu")
 
     if has_config("sse") then
         add_defines("BASISU_SUPPORT_SSE=1", {public = true})
-        if not is_plat("windows") then
+        if is_plat("windows") then
+            add_cxflags("/clang:-msse4.1", {tools = {"clang_cl"}})
+        else
             add_cxflags("-msse4.1")
         end
     else
