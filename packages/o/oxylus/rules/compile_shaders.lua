@@ -31,12 +31,15 @@ rule("compile_shaders")
 
         -- So project shaders can `import common` / `#include <fullscreen.slang>`.
         local engine_shaders = path.join(oxylus_pkg:installdir(), "shared", "shader_sources")
+        -- shared.slang includes Render/GPU/Shared.hpp from here.
+        local engine_includes = path.join(oxylus_pkg:installdir(), "include")
         local abs_output = path.absolute(path.join(target:targetdir(), output_dir, output_name))
 
         local args = {
             "--config", config_path,
             "--output", abs_output,
             "--include-dir", engine_shaders,
+            "--include-dir", engine_includes,
         }
 
         batchcmds:show_progress(opt.progress,
