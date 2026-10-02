@@ -1,7 +1,8 @@
 rule("install_shaders")
     after_build(function (target)
         local oxylus_pkg = target:pkg("oxylus")
-        if oxylus_pkg then
+        -- without compile_resources the package has no engine.oxpack to hand out
+        if oxylus_pkg and oxylus_pkg:config("compile_resources") then
             local output_dir = target:extraconf("rules", "@oxylus/install_shaders", "output_dir") or ""
             local shader_src = path.join(oxylus_pkg:installdir(), "shared", "shaders")
             local shader_dst = path.join(target:targetdir(), output_dir)

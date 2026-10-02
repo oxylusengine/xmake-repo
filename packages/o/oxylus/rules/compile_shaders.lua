@@ -15,6 +15,11 @@ rule("compile_shaders")
             return
         end
 
+        -- the package was built without rcli runs, see its compile_resources config
+        if not oxylus_pkg:config("compile_resources") then
+            return
+        end
+
         local config_path = path.absolute(sourcefile)
         local config_dir = path.directory(config_path)
 

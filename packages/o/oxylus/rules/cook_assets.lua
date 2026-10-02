@@ -15,6 +15,11 @@ rule("cook_assets")
             return
         end
 
+        -- the package was built without rcli runs, see its compile_resources config
+        if not oxylus_pkg:config("compile_resources") then
+            return
+        end
+
         local root_dir = target:extraconf("rules", "@oxylus/cook_assets", "root_dir")
         assert(root_dir, "@oxylus/cook_assets: set `root_dir` to the project's asset directory")
         root_dir = path.absolute(root_dir)

@@ -12,6 +12,9 @@ package("oxylus")
     add_configs("lua_bindings", {description = "Enable lua bindings", default = true, type = "boolean"})
     add_configs("profile", {description = "Enable tracy profiling", default = false, type = "boolean"})
     add_configs("tests", {description = "Enable tests", default = false, type = "boolean"})
+    -- Off skips every rcli run (engine.oxpack, consumer shader packs, asset cooking), for builds
+    -- that are only compiled and never run or shipped.
+    add_configs("compile_resources", {description = "Run rcli to build shader packs and cook assets", default = true, type = "boolean"})
 
     add_deps("miniaudio 0.11.25", {system = false})
     add_deps("fastgltf-ox v0.8.0", {system = false})
@@ -85,6 +88,10 @@ package("oxylus")
         configs.lua_bindings = package:config("lua_bindings")
         configs.profile = package:config("profile")
         configs.tests = package:config("tests")
+        -- only passed when off, sources from before the option existed reject it
+        if not package:config("compile_resources") then
+            configs.compile_resources = false
+        end
         configs.editor = false
         import("package.tools.xmake").install(package, configs)
         os.cp("Oxylus/include", package:installdir())
@@ -115,7 +122,7 @@ package("oxylus")
 
         -- Renderer::init loads a compiled engine.oxpack, so build it here. Consumers get this
         -- prebuilt; their own shaders go through @oxylus/compile_shaders into a separate pack.
-        if not package:is_cross() then
+        if package:config("compile_resources") and not package:is_cross() then
             os.vrunv(path.join(bindir, "rcli"), {
                 "--config", path.absolute("OxylusEditor/Assets/engine.toml"),
                 "--output", path.join(shader_dst, "engine.oxpack"),
