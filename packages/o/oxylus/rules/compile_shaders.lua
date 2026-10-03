@@ -16,7 +16,7 @@ rule("compile_shaders")
         end
 
         -- the package was built without rcli runs, see its compile_resources config
-        if not oxylus_pkg:config("compile_resources") then
+        if oxylus_pkg:requireconf("configs", "compile_resources") == false then
             return
         end
 
