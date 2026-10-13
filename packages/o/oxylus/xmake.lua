@@ -106,13 +106,6 @@ package("oxylus")
         os.mkdir(shader_src_dst)
         os.cp("Oxylus/src/Render/Shaders/*", shader_src_dst)
 
-        -- RmlUI loads no font by default, so consumers have nothing to render text with
-        -- unless they ship their own. These live under the editor tree but are not
-        -- editor-only, so hand them to consumers through @oxylus/install_fonts.
-        local font_src = "OxylusEditor/Assets/Fonts"
-        local font_dst = package:installdir("shared", "fonts")
-        os.cp(font_src .. "/*", font_dst)
-
         -- rcli is linked with $ORIGIN as its runpath, but libResourceCompiler lands in
         -- lib/, so keep a copy next to the executable to make it runnable from installdir.
         local bindir = package:installdir("bin")
