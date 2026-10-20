@@ -5,6 +5,28 @@ package("oxylus")
 
     add_urls("https://github.com/oxylusengine/Oxylus.git")
 
+    local source_dir = os.getenv("OXYLUS_SOURCE_DIR")
+    if source_dir and source_dir ~= "" then
+        source_dir = path.normalize(source_dir)
+        set_sourcedir(source_dir)
+        set_policy("package.install_always", true)
+        -- include the checkout in the package identity so local builds have their own cache
+        add_configs("local_source", {
+            description = "Local Oxylus checkout",
+            default = source_dir,
+            readonly = true,
+            type = "string"
+        })
+        on_load(function (package)
+            local local_source = package:config("local_source")
+            assert(path.is_absolute(local_source), "OXYLUS_SOURCE_DIR must be an absolute path")
+            assert(os.isfile(path.join(local_source, "Oxylus", "xmake.lua")),
+                "OXYLUS_SOURCE_DIR must point to an Oxylus checkout")
+            -- keep branch selection compatible with consumers, then use the checkout directly
+            package:set("urls", {})
+        end)
+    end
+
     add_versions("v1.0.0", "b0065989683130888eeb036fab8524b854d1ff78")
 
     set_policy("package.strict_compatibility", true)
@@ -21,6 +43,7 @@ package("oxylus")
     add_deps("meshoptimizer v1.2", {system = false})
     add_deps("libsdl3 3.4.12", {})
     add_deps("basisu-ox 2.50", {debug = false, system = false})
+    add_deps("shader-slang v2026.12.2", {configs = {shared = true}, system = false, private = true})
     add_deps("enet-ox v2.6.5", {configs={test=false,use_more_peers=false}})
     add_deps("flecs v4.1.5")
     add_deps("imgui v1.92.9b-docking", {configs={wchar32=true}})
@@ -40,6 +63,7 @@ package("oxylus")
     add_deps("simdjson v4.2.4")
     add_deps("svector v1.0.3")
     add_deps("zpp_bits v4.7.1")
+    add_deps("zstd v1.5.7", {system = false})
     add_deps("rmlui f7b297e2c8fc44c5e85df498dbae91762c0769a5", {configs={shared=false,lua=true},system=false})
 
     add_defines(
@@ -93,7 +117,16 @@ package("oxylus")
             configs.compile_resources = false
         end
         configs.editor = false
-        import("package.tools.xmake").install(package, configs)
+        local xmake = import("package.tools.xmake")
+        local install_options = {}
+        if package:config("local_source") then
+            -- keep incremental builds and their configuration out of the engine checkout
+            local build_dir = path.join(package:cachedir(), package:buildhash())
+            install_options.builddir = path.join(build_dir, "build")
+            install_options.envs = xmake.buildenvs(package)
+            install_options.envs.XMAKE_CONFIGDIR = build_dir
+        end
+        xmake.install(package, configs, install_options)
         os.cp("Oxylus/include", package:installdir())
 
         local shader_dst = package:installdir("shared", "shaders")
@@ -109,7 +142,12 @@ package("oxylus")
         -- rcli is linked with $ORIGIN as its runpath, but libResourceCompiler lands in
         -- lib/, so keep a copy next to the executable to make it runnable from installdir.
         local bindir = package:installdir("bin")
-        if not package:is_plat("windows") then
+        if package:is_plat("windows") then
+            -- rcli must load the same slang runtime it was built against
+            local slang_dir = package:dep("shader-slang"):installdir()
+            os.cp(path.join(slang_dir, "lib", "slang-compiler.dll"), bindir)
+            os.cp(path.join(slang_dir, "modules", "*.dll"), bindir)
+        else
             os.trycp(path.join(package:installdir("lib"), "libResourceCompiler.*"), bindir)
         end
 
