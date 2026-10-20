@@ -64,6 +64,7 @@ package("oxylus")
     add_deps("svector v1.0.3")
     add_deps("zpp_bits v4.7.1")
     add_deps("zstd v1.5.7", {system = false})
+    add_deps("zlib", {system = false})
     add_deps("freetype", {system = false})
     add_deps("rmlui f7b297e2c8fc44c5e85df498dbae91762c0769a5", {configs={shared=false,lua=true},system=false})
 
