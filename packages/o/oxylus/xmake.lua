@@ -17,21 +17,15 @@ package("oxylus")
             readonly = true,
             type = "string"
         })
-        on_load(function (package)
-            local local_source = package:config("local_source")
-            assert(path.is_absolute(local_source), "OXYLUS_SOURCE_DIR must be an absolute path")
-            assert(os.isfile(path.join(local_source, "Oxylus", "xmake.lua")),
-                "OXYLUS_SOURCE_DIR must point to an Oxylus checkout")
-            -- keep branch selection compatible with consumers, then use the checkout directly
-            package:set("urls", {})
-        end)
     end
 
     add_versions("v1.0.0", "b0065989683130888eeb036fab8524b854d1ff78")
 
     set_policy("package.strict_compatibility", true)
 
-    add_configs("lua_bindings", {description = "Enable lua bindings", default = true, type = "boolean"})
+    -- C# scripting: OxylusDotNet, the managed SDK a game's C# project builds against, and @oxylus/publish_csharp.
+    -- Building it needs the .NET 10 SDK
+    add_configs("csharp", {description = "Enable C# scripting", default = true, type = "boolean"})
     add_configs("profile", {description = "Enable tracy profiling", default = false, type = "boolean"})
     add_configs("tests", {description = "Enable tests", default = false, type = "boolean"})
     -- Off skips every rcli run (engine.oxpack, consumer shader packs, asset cooking), for builds
@@ -48,7 +42,7 @@ package("oxylus")
     add_deps("flecs v4.1.5")
     add_deps("imgui v1.92.9b-docking", {configs={wchar32=true}})
     add_deps("vk-bootstrap v1.4.354", {debug=false,system=false})
-    add_deps("vuk 2026.08.25", {configs={debug_allocations=false}})
+    add_deps("vulkan-headers 1.4.335+0", {system = false})
     add_deps("unordered_dense v4.8.1")
     add_deps("tracy v0.13.1", {configs={code_transfer=true,tracy_enable=false,callstack_inlines=false,on_demand=true,system_tracing=true,exit=true,callstack=true}})
     add_deps("fmt 12.1.0", {configs={shared=false,header_only=false},system=false})
@@ -56,8 +50,6 @@ package("oxylus")
     add_deps("simdutf v8.2.0")
     add_deps("joltphysics v5.6.0", {configs={avx2=true,debug_renderer=true,tzcnt=true,sse4_1=true,sse4_2=true,avx=true,rtti=true,lzcnt=true}})
     add_deps("glm 1.0.3", {configs={header_only=true,cxx_standard="20"},system=false})
-    add_deps("sol2 c1f95a773c6f8f4fde8ca3efe872e7286afe4444", {configs = { includes_lua = false }})
-    add_deps("lua v5.4.7")
     add_deps("toml++ v3.4.0")
     add_deps("loguru v2.1.0", {configs={fmt=true},system=false})
     add_deps("simdjson v4.2.4")
@@ -66,7 +58,7 @@ package("oxylus")
     add_deps("zstd v1.5.7", {system = false})
     add_deps("zlib", {system = false})
     add_deps("freetype", {system = false})
-    add_deps("rmlui f7b297e2c8fc44c5e85df498dbae91762c0769a5", {configs={shared=false,lua=true},system=false})
+    add_deps("rmlui f7b297e2c8fc44c5e85df498dbae91762c0769a5", {configs={shared=false},system=false})
 
     add_defines(
         "GLM_ENABLE_EXPERIMENTAL",
@@ -109,14 +101,45 @@ package("oxylus")
             { public = true })
     end
 
+    on_load(function (package)
+        local local_source = package:config("local_source")
+        if local_source then
+            assert(path.is_absolute(local_source), "OXYLUS_SOURCE_DIR must be an absolute path")
+            assert(os.isfile(path.join(local_source, "Oxylus", "xmake.lua")),
+                "OXYLUS_SOURCE_DIR must point to an Oxylus checkout")
+            -- keep branch selection compatible with consumers, then use the checkout directly
+            package:set("urls", {})
+        end
+
+        -- OxylusDotNet needs the engine after it for single pass linkers, and ResourceCompiler is rcli's alone
+        -- vir's logging macros use __VA_OPT__, which MSVC's traditional preprocessor rejects. clang-cl takes the flag
+        -- too, and ignores it
+        package:add("deps", "vir 2026.10.19", {
+            debug = package:is_debug(),
+            system = false,
+            configs = {cxflags = package:is_plat("windows") and "/Zc:preprocessor" or nil},
+        })
+
+        if package:config("csharp") then
+            package:add("defines", "OX_DOTNET")
+            package:add("links", "OxylusDotNet")
+        end
+        package:add("links", "Oxylus")
+        -- rmlui lists its libraries in name order, the core before the debugger Oxylus links, which a single pass linker
+        -- (ld.bfd) can't resolve
+        package:add("linkorders", {"rmlui_debugger", "rmlui"})
+    end)
+
     on_install(function (package)
         local configs = {}
-        configs.lua_bindings = package:config("lua_bindings")
         configs.profile = package:config("profile")
         configs.tests = package:config("tests")
         -- only passed when off, sources from before the option existed reject it
         if not package:config("compile_resources") then
             configs.compile_resources = false
+        end
+        if not package:config("csharp") then
+            configs.csharp = false
         end
         configs.editor = false
         local xmake = import("package.tools.xmake")
@@ -130,6 +153,12 @@ package("oxylus")
         end
         xmake.install(package, configs, install_options)
         os.cp("Oxylus/include", package:installdir())
+        if package:config("csharp") then
+            -- file by file, a directory copy would replace the engine's own include/Scripting
+            os.cp("OxylusScriptingDotNet/include/**.hpp", package:installdir("include"), {rootdir = "OxylusScriptingDotNet/include"})
+            -- @oxylus/publish_csharp drives dotnet through the engine's own helpers
+            os.cp("xmake/dotnet.lua", package:installdir("xmake"))
+        end
 
         local shader_dst = package:installdir("shared", "shaders")
         os.mkdir(shader_dst)
