@@ -3,15 +3,22 @@ package("fastgltf-ox")
     set_description("A modern C++17 glTF 2.0 library focused on speed, correctness, and usability")
     set_license("MIT")
 
+    -- "+ox.N" labels are local patch revisions of the same upstream tag
     add_urls("https://github.com/spnda/fastgltf/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/spnda/fastgltf.git")
+             "https://github.com/spnda/fastgltf.git", {version = function (version)
+        return (version:gsub("%+.*$", ""))
+    end})
 
     add_versions("v0.9.0", "0bb564e127b14c22f062db50f89381dd2e0a20dbaf4987ca138a4ae8728712f9")
+    add_versions("v0.8.0+ox.1", "0bc88a0858c88d94306443946a5a1606118b7d5e4960f1e6186a3632e9df38fb")
     add_versions("v0.8.0", "0bc88a0858c88d94306443946a5a1606118b7d5e4960f1e6186a3632e9df38fb")
     add_versions("v0.7.2", "292fc9d0d5a6726c90db88c1aadf09e6d152ffc0ebffe6fb968736c47288511c")
     add_versions("v0.7.1", "44bcb025dd5cd480236a3bc7a3f8c9a708a801ed773b7859677440d22e0e1e7c")
 
+    -- without a simdjson cmake config, fastgltf downloads and compiles its own simdjson into the
+    -- library, which clashes with the simdjson package everything else links
     add_patches("0.7.1", "patches/0.7.1/cmake-simdjson.patch", "943828708f0e011122249196dc70d9a1f026e3212e1c1c35f6988907a6ea4e49")
+    add_patches("0.8.0+ox.1", "patches/0.8.0+ox.1/cmake-simdjson.patch", "47725506da4d458a0ceee4a9e58b563585c7f3550c2ab6370f419450a08e0176")
 
     add_configs("small_vector", {description = "Uses a custom SmallVector type optimised for small arrays", default = false, type = "boolean"})
     add_configs("memory_pool", {description = "Disables the memory allocation algorithm based on polymorphic resources", default = false, type = "boolean"})
