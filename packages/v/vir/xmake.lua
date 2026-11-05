@@ -6,6 +6,7 @@ package("vir")
     add_urls("https://github.com/oxylusengine/vir.git")
 
     add_versions("2026.10.19", "cd4949b2fed17a0d2578ed8b1e2407438af9ca41")
+    add_versions("2026.11.05", "7292281daa9c313a96da29a195a9e03f9250f020")
 
     add_deps("vulkan-headers", "vulkan-memory-allocator", "fmt", "unordered_dense", "svector", "tracy")
 
