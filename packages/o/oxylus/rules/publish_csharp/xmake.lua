@@ -1,14 +1,16 @@
--- Downstream counterpart of the engine's own `ox.publish_csharp`: publishes a game's C# project with NativeAOT into
--- `<targetdir>/<output_dir>` and installs the library next to the game, so it runs with no .NET installed. The project
--- builds against the Oxylus.Scripting the package installed rather than whatever SDK its Oxylus.props names.
+-- Downstream counterpart of the engine's own `ox.publish_csharp`: publishes a game's C# project with NativeAOT and
+-- copies the library into `<targetdir>/<output_dir>`, by default next to the executable with the game's other shared
+-- libraries, and installs it the same way, so it runs with no .NET installed. The library is named after the project.
+-- The project builds against the Oxylus.Scripting the package installed rather than whatever SDK its Oxylus.props
+-- names.
 --
 --   add_rules("@oxylus/publish_csharp", {
 --       project = os.scriptdir() .. "/Scripts/Pong.csproj",
 --       asset_dir = os.scriptdir() .. "/Assets",
 --   })
 --
--- `asset_dir` is where the project's .cs files live, `output_dir` defaults to "scripts". NativeAOT can't cross compile
--- between operating systems, so each platform publishes its own.
+-- `asset_dir` is where the project's .cs files live. NativeAOT can't cross compile between operating systems, so each
+-- platform publishes its own.
 rule("publish_csharp")
     after_build(function (target)
         import("core.project.depend")
@@ -28,7 +30,11 @@ rule("publish_csharp")
         asset_dir = path.absolute(asset_dir)
 
         local output_dir = path.absolute(path.join(target:targetdir(),
-            target:extraconf("rules", "@oxylus/publish_csharp", "output_dir") or "scripts"))
+            target:extraconf("rules", "@oxylus/publish_csharp", "output_dir") or "."))
+        local library = path.basename(project)
+            .. (target:is_plat("windows") and ".dll" or target:is_plat("macosx") and ".dylib" or ".so")
+        -- on the side, the pdb and import library a publish leaves would overwrite the executable's own next to it
+        local publish_dir = path.absolute(path.join(target:autogendir(), "publish_csharp"))
         local sdk_dir = path.join(oxylus_pkg:installdir(), "managed")
         local dotnet = import("dotnet", { rootdir = path.join(oxylus_pkg:installdir(), "xmake"), anonymous = true })
 
@@ -58,7 +64,7 @@ rule("publish_csharp")
 
         depend.on_changed(function ()
             cprint("${color.build.object}publishing C# %s with NativeAOT", path.filename(project))
-            dotnet.publish_aot(target, project, output_dir, {
+            dotnet.publish_aot(target, project, publish_dir, {
                 "-p:OxylusSdkDir=" .. path.unix(sdk_dir) .. "/",
                 "-p:OxylusAssetDir=" .. path.unix(asset_dir) .. "/",
                 -- a game needs no culture data or exception message resources, and trades size for speed
@@ -66,23 +72,19 @@ rule("publish_csharp")
                 "-p:UseSystemResourceKeys=true",
                 "-p:OptimizationPreference=Speed",
             })
+            os.vcp(path.join(publish_dir, library), path.join(output_dir, library))
         end, {
             dependfile = target:dependfile("oxylus_publish_csharp"),
             files = sources,
             values = table.join({ output_dir }, sources),
-            changed = not os.isdir(output_dir),
+            changed = not os.isfile(path.join(output_dir, library)),
         })
     end)
 
     after_install(function (target)
-        local output_dir = target:extraconf("rules", "@oxylus/publish_csharp", "output_dir") or "scripts"
-        local published = path.join(target:targetdir(), output_dir)
-        local destination = path.join(target:installdir(), output_dir)
-        os.mkdir(destination)
-        -- the library alone, the debug symbols and import library the publish leaves next to it don't ship
-        local libraries = table.join(os.files(path.join(published, "*.dll")), os.files(path.join(published, "*.so")),
-            os.files(path.join(published, "*.dylib")))
-        for _, library in ipairs(libraries) do
-            os.vcp(library, destination)
-        end
+        local output_dir = target:extraconf("rules", "@oxylus/publish_csharp", "output_dir") or "."
+        local library = path.basename(target:extraconf("rules", "@oxylus/publish_csharp", "project"))
+            .. (target:is_plat("windows") and ".dll" or target:is_plat("macosx") and ".dylib" or ".so")
+        -- bindir, App::with_scripts is relative to the executable wherever an install puts that
+        os.vcp(path.join(target:targetdir(), output_dir, library), path.join(target:bindir(), output_dir, library))
     end)

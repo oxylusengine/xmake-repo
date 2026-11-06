@@ -126,8 +126,8 @@ package("oxylus")
         end
         package:add("links", "Oxylus")
         -- rmlui lists its libraries in name order, the core before the debugger Oxylus links, which a single pass linker
-        -- (ld.bfd) can't resolve
-        package:add("linkorders", {"rmlui_debugger", "rmlui"})
+        -- (ld.bfd) can't resolve. Oxylus is named too, the sort would otherwise move the debugger ahead of it
+        package:add("linkorders", {"Oxylus", "rmlui_debugger", "rmlui"})
     end)
 
     on_install(function (package)
